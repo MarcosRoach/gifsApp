@@ -1,13 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SearchGiftResponse, Gif } from '../interfaces/gifs.interfaces';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GifsService {
   private apiKey: string = 'Rm0BSzcHWCbj0uRXcXAxmKgELxDjYgic';
+  private servicioUrl: string = 'http://api.giphy.com/v1/gifs';
   private _historial: string[] = [];
 
   public resultados: Gif[] = [];
@@ -43,10 +43,13 @@ export class GifsService {
     // SI EL TERMINO NO ESTA INCLUIDO EN EL ARRAY LO AGREGO
 
     // LLAMAR A LA API GIPHY
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('limit', '10')
+      .set('q', termino);
+
     this.http
-      .get<SearchGiftResponse>(
-        `http://api.giphy.com/v1/gifs/search?api_key=Rm0BSzcHWCbj0uRXcXAxmKgELxDjYgic&q=${termino}&limit=10`
-      )
+      .get<SearchGiftResponse>(`${this.servicioUrl}/search`, { params: params })
       .subscribe((resp) => {
         this.resultados = resp.data;
 
